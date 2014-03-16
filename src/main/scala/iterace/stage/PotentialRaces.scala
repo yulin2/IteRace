@@ -120,7 +120,9 @@ class PotentialRaces(pa: RacePointerAnalysis) extends Function0[ProgramRaceSet] 
       }
       case _ => false
     }
-  } get
+  } getOrElse {
+    throw new Exception("No execute")
+  }
 
   println("execute node: " + (executeInvoke: S[I]))
 
@@ -134,9 +136,9 @@ class PotentialRaces(pa: RacePointerAnalysis) extends Function0[ProgramRaceSet] 
 
   val dominatingExecute = dominators.dominators(executeInvoke).toList
 
-  println(executeInvoke.getNode().getIR())
+//  println(executeInvoke.getNode().getIR())
 
-  println(dominatingExecute mkString "\n")
+//  println(dominatingExecute mkString "\n")
 
   val statementsDominatingExecute = (dominatingExecute collect {
     case b if b != null && b.getNode() != null && b.getLastInstruction() != null => b: S[I]
@@ -155,11 +157,11 @@ class PotentialRaces(pa: RacePointerAnalysis) extends Function0[ProgramRaceSet] 
     }))
   val instructionDominatingExecute = instructionDominators.dominators(executeInvokeInstruction.get) flatMap { _.iterator() } toList
 
-  println(instructionDominatingExecute.size)
+//  println(instructionDominatingExecute.size)
   val dominatorsFromMethodContainingExecute = instructionDominatingExecute map { i => S(executeInvoke.getNode(), i) }
   //  val instructionsDominatingExecute = Do
 
-  println("statements:\n" + statementsDominatingExecute.mkString("\n"))
+//  println("statements:\n" + statementsDominatingExecute.mkString("\n"))
 
   private val instructionsOutsideAsyncs =
     DFS.getReachableNodes(callGraph, callGraph.getEntrypointNodes(), { n: N =>
@@ -168,7 +170,7 @@ class PotentialRaces(pa: RacePointerAnalysis) extends Function0[ProgramRaceSet] 
     }) flatMap { n => n.instructions map (S(n, _)) }
 
   private val mayHappenInParallelWithAsyncTask =
-    instructionsOutsideAsyncs.toSet &~ statementsDominatingExecute // &~ dominatorsFromMethodContainingExecute.toSet
+    instructionsOutsideAsyncs.toSet &~ statementsDominatingExecute &~ dominatorsFromMethodContainingExecute.toSet
 
   case class AsyncTask(n: N) extends MayRunInParallel {
     def prettyPrintDetail = "async task: " + n
