@@ -170,9 +170,18 @@ object threadSafeOnClosure extends SelectorOfClassesAndMethods {
 
   val classPatterns = List("(android.*|com.android.*)",
       "com.trilead.ssh2.*",
-      "org.apache.*",
+      "com.fsck.k9.mail.filter.*",
+      "com.fsck.k9.Preferences.*",
+      "com.fsck.k9.Account.*",
+      "com.fsck.k9.Identity.*",
+      "com.fsck.k9.NotificationSetting.*",
+      "com.fsck.k9.preferences.Storage.*",
+      "com.fsck.k9.mail.store.StorageManager.*",
+      "com.fsck.k9.preferences.Storage.*",
+      "org.videolan.vlc.MediaDatabase.*"
+      /*"org.apache.*",
       "oauth.signpost.*",
-      "com.google.*")
+      "com.google.*"*/)
 
   val methods = List(
 
